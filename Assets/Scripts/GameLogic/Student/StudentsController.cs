@@ -64,9 +64,6 @@ public class StudentsController : MonoBehaviour
 
 	private IEnumerator ChangeRoles()
 	{
-		yield return new WaitForSeconds (3);
-		GetComponentInChildren<ScreenMessages> ().ShowRound2 (true);
-
 		yield return new WaitForSeconds (2);
 		GameLogic.Logic.ChangeRoles ();
 	}

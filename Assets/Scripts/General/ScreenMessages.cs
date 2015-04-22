@@ -7,99 +7,98 @@ public class ScreenMessages : MonoBehaviour
 	public SpriteRenderer labelRenderer;
 	public Sprite[] labels;
 
-	private bool isBlackScreen;
+    private ArrayList labelsList;
+	private bool isActive;
 
 	void Start()
 	{
-		isBlackScreen = false;
+		isActive = false;
+        labelsList = new ArrayList();
 	}
 
 	public bool isShowing()
 	{
-		return isBlackScreen;
+		return isActive;
 	}
 
 	public void ShowRound1()
 	{
-		blackScreen.GetComponent<Animation>().Play("BgAppear");
-		labelRenderer.sprite = labels [2];
-
-		Show ();
+        labelsList.Add(2);
+        AddToShow();
 	}
 
-	public void ShowRound2(bool newLabel)
+	public void ShowRound2()
 	{
-		if (newLabel) 
-		{
-			blackScreen.GetComponent<Animation>().Play("BgAppear");
-		}
-
-		labelRenderer.sprite = labels [0];
-		Show ();
-	}
-
-	public bool ShowBlackScreen()
-	{
-		if (isBlackScreen) 
-		{
-			return false;
-		} 
-		else 
-		{
-			blackScreen.GetComponent<Animation>().Play("BgAppear");
-			return true;
-		}
+        labelsList.Add(0);
+        AddToShow();
 	}
 	
 	public void ShowTimeOut()
 	{
-		blackScreen.GetComponent<Animation>().Play("BgAppear");
-
-		labelRenderer.sprite = labels [1];
-		Show ();
+        labelsList.Add(1);
+        AddToShow();
 	}
+
+    private void AddToShow()
+    {
+        if (!isActive)
+        {
+            Show();
+        }
+    }
 
 	private void Show()
 	{
-		isBlackScreen = true;
+        if (isActive)
+        {
+            if (labelsList.Count > 0)
+            {
+                labelRenderer.sprite = labels[(int)labelsList[0]];
+                labelsList.RemoveAt(0);
 
-		GetComponent<Animation>().Play ("LabelAppear");
-		StartCoroutine (Disappear ());
+                StartCoroutine(ShowLabel());
+            }
+            else
+            {
+                StartCoroutine(HideBg());
+            }
+        }
+        else
+        {
+            ShowBg();
+        }
 	}
 
-	private IEnumerator Disappear()
+	private IEnumerator ShowLabel()
 	{
-		yield return new WaitForSeconds (2);
-		GetComponent<Animation>().Play ("LabelDisappear");
+		yield return new WaitForSeconds (0.5f);
+        GetComponent<Animation>().Play("LabelAppear");
 
-		if (labelRenderer.sprite == labels [0]) 
-		{
-			yield return new WaitForSeconds (0.2f);
-			if (GameLogic.Logic.RoundNum < 2) 
-			{
-				blackScreen.GetComponent<Animation>().Play ("BgDisappear");
-				isBlackScreen = false;
-			}
-		} 
-		else if (labelRenderer.sprite == labels [1]) 
-		{
-			if (GameLogic.Logic.RoundNum < 2) 
-			{
-				yield return new WaitForSeconds (0.5f);
-				ShowRound2 (false);
-			} 
-			else 
-			{
-				yield return new WaitForSeconds (0.5f);
+        yield return new WaitForSeconds(1.5f);
+        GetComponent<Animation>().Play("LabelDisappear");
 
-			}
-		} 
-		else 
-		{
-			blackScreen.GetComponent<Animation>().Play ("BgDisappear");
-			isBlackScreen = false;
-		}
+        yield return new WaitForSeconds(0.3f);
+        Show();
 	}
+
+    public void ShowBg()
+    {
+        blackScreen.GetComponent<Animation>().Play("BgAppear");
+        isActive = true;
+
+        Show();
+    }
+
+    private IEnumerator HideBg()
+    {
+        if (!GameLogic.Logic.isEnd())
+        {
+            yield return new WaitForSeconds(0.5f);
+
+            blackScreen.GetComponent<Animation>().Play("BgDisappear");
+            isActive = false;
+        }
+    }
 }
 
 

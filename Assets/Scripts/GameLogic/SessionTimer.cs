@@ -16,16 +16,16 @@ public class SessionTimer : MonoBehaviour
 		timeText.GetComponent<Renderer>().sortingLayerName = "Background";	
 		timeText.GetComponent<Renderer>().sortingOrder = 2;
 
+        timer = 0;
 		play = false;
 	}
 
 	public void SetSessionTime(float time)
 	{
 		sessionTime = time;
-		timer = time;
+        timer = sessionTime + 1;
 
 		play = true;
-		timeText.text = ((int)timer / 60) + ":" + ((int)timer % 60).ToString("D2");
 	}
 	
 	// Update is called once per frame
@@ -46,9 +46,15 @@ public class SessionTimer : MonoBehaviour
 		}
 	}
 
+    public void Stop()
+    {
+        timer = 0;
+        play = false;
+    }
+
 	private void ChangeRoles()
 	{
-		FindObjectOfType<ScreenMessages>().ShowTimeOut();
+        FindObjectOfType<ScreenMessages>().ShowTimeOut();
 		
 		Controls.Functions.BlockPlayer (0);
 		Controls.Functions.BlockPlayer (1);

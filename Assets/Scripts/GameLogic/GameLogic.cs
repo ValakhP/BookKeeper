@@ -1,123 +1,128 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GameLogic : MonoBehaviour 
+public class GameLogic : MonoBehaviour
 {
-	public HeroController librarian;
-	public HeroController student;
+    public HeroController librarian;
+    public HeroController student;
 
-	public Transform libStartPosition;
+    public Transform libStartPosition;
 
-	public static GameLogic Logic;
+    public static GameLogic Logic;
 
-	public int RoundNum;
+    public int RoundNum;
+    public bool isEnd() { return RoundNum == 2; }
 
-	void Start () 
-	{
+    void Start()
+    {
 		RoundNum = 1;
 
-		librarian.transform.position = libStartPosition.position;
-		
-		student = GetComponent<StudentsController>().RandomStudentController();
-		
-		librarian.SetPlayer (0);
-		student.SetPlayer (1);
+        librarian.transform.position = libStartPosition.position;
 
-		Controls.Functions.BlockPlayer (librarian.Player);
-		Controls.Functions.BlockPlayer (student.Player);
+        student = GetComponent<StudentsController>().RandomStudentController();
 
-		if (!Logic) 
-		{
-			Logic = this;
-		}
+        librarian.SetPlayer(0);
+        student.SetPlayer(1);
 
-		GetComponentInChildren<ScreenMessages> ().ShowRound1 ();
-		StartCoroutine (StartGame ());
-	}
+        Controls.Functions.BlockPlayer(librarian.Player);
+        Controls.Functions.BlockPlayer(student.Player);
 
-	private IEnumerator StartGame()
-	{
-		yield return new WaitForSeconds (3);
-		
-		Controls.Functions.UnblockPlayer (librarian.Player, 1);
-		Controls.Functions.UnblockPlayer (student.Player, 0);
-		GetComponentInChildren<SessionTimer> ().SetSessionTime (120);
-	}
-	
-	void Update () 
-	{
-		if (Input.GetKey(KeyCode.Escape))
-		{
-			Application.LoadLevel("MainMenu");
-		}
-	}
+        if (!Logic)
+        {
+            Logic = this;
+        }
 
-	public void CatchStudent(int player)
-	{
-		GetComponentInChildren<GameScore> ().AddScore (player);
-		Controls.Functions.BlockPlayer (0);
-		Controls.Functions.BlockPlayer (1);
-	}
+        GetComponentInChildren<ScreenMessages>().ShowRound1();
+        StartCoroutine(StartGame());
+    }
 
-	public void NextStudent()
-	{
-		student = GetComponent<StudentsController>().RandomStudentController();
-		student.SetPlayer (1 - librarian.Player);
-		
-		Controls.Functions.UnblockPlayer (librarian.Player, 1);
-		Controls.Functions.UnblockPlayer (student.Player, 0);
-	}
+    private IEnumerator StartGame()
+    {
+        yield return new WaitForSeconds(3);
 
-	public void ChangeRoles()
-	{
-		if (RoundNum < 2) 
-		{
-			GetComponent<StudentsController> ().NewRound();
-			student = GetComponent<StudentsController> ().RandomStudentController ();
+        Controls.Functions.UnblockPlayer(librarian.Player, 1);
+        Controls.Functions.UnblockPlayer(student.Player, 0);
+        GetComponentInChildren<SessionTimer>().SetSessionTime(120);
+    }
 
-			librarian.SetPlayer (1 - librarian.Player);
-			student.SetPlayer (1 - librarian.Player);
+    void Update()
+    {
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            Application.LoadLevel("MainMenu");
+        }
+    }
 
-			librarian.transform.position = libStartPosition.position;
-			librarian.transform.localScale = new Vector3(-1, 1, 1);
-			
-			StartCoroutine(NewRound());
-		}
-		else 
-		{
-			StartCoroutine(CountScore());
-		}
-	}
+    public void CatchStudent(int player)
+    {
+        GetComponentInChildren<GameScore>().AddScore(player);
+        Controls.Functions.BlockPlayer(0);
+        Controls.Functions.BlockPlayer(1);
+    }
 
-	private IEnumerator NewRound()
-	{
-		yield return new WaitForSeconds (1);
+    public void NextStudent()
+    {
+        student = GetComponent<StudentsController>().RandomStudentController();
+        student.SetPlayer(1 - librarian.Player);
 
-		if (GetComponentInChildren<ScreenMessages> ().isShowing ()) 
-		{
-			StartCoroutine(NewRound());
-		} 
-		else 
-		{
-			RoundNum++;
-			Controls.Functions.UnblockPlayer (librarian.Player, 1);
-			Controls.Functions.UnblockPlayer (student.Player, 0);
-			
-			GetComponentInChildren<SessionTimer>().SetSessionTime(120);
-		}
-	}
+        Controls.Functions.UnblockPlayer(librarian.Player, 1);
+        Controls.Functions.UnblockPlayer(student.Player, 0);
+    }
 
-	public IEnumerator CountScore()
-	{
-		yield return new WaitForSeconds(3);
+    public void ChangeRoles()
+    {
+        if (RoundNum < 2)
+        {
+            GetComponentInChildren<SessionTimer>().Stop();
 
-		if (FindObjectOfType<ScreenMessages> ().ShowBlackScreen ()) 
-		{
-			yield return new WaitForSeconds(0.5f);
-		}
+            GetComponent<StudentsController>().NewRound();
+            student = GetComponent<StudentsController>().RandomStudentController();
 
-		GetComponentInChildren<GameScore> ().ShowResults ();
-	}
+            librarian.SetPlayer(1 - librarian.Player);
+            student.SetPlayer(1 - librarian.Player);
+
+            librarian.transform.position = libStartPosition.position;
+            librarian.transform.localScale = new Vector3(-1, 1, 1);
+
+            GetComponentInChildren<ScreenMessages>().ShowRound2();
+
+            StartCoroutine(NewRound());
+        }
+        else
+        {
+            StartCoroutine(CountScore());
+        }
+    }
+
+    private IEnumerator NewRound()
+    {
+        if (!GetComponentInChildren<ScreenMessages>().isShowing())
+        {
+            RoundNum++;
+            Controls.Functions.UnblockPlayer(librarian.Player, 1);
+            Controls.Functions.UnblockPlayer(student.Player, 0);
+
+            GetComponentInChildren<SessionTimer>().SetSessionTime(120);
+        }
+        else
+        {
+            yield return new WaitForSeconds(1f);
+            StartCoroutine(NewRound());
+        }
+    }
+
+    public IEnumerator CountScore()
+    {
+        yield return new WaitForSeconds(2.5f);
+
+        if (!FindObjectOfType<ScreenMessages>().isShowing())
+        {
+            FindObjectOfType<ScreenMessages>().ShowBg();
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        GetComponentInChildren<GameScore>().ShowResults();
+    }
 }
 
 
