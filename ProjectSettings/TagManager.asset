@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - StudentOff
+  - Student
+  - StudentObjects
+  - Librarian
+  - LibrarianObjects
+  - Ground
+  - 
+  - 
+  - 
+  - Foreground
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Background
+    uniqueID: 4016122553
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Librarian
+    uniqueID: 3669750665
+    locked: 0
+  - name: Foreground
+    uniqueID: 3391240597
+    locked: 0
