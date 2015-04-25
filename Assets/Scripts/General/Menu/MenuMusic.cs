@@ -18,8 +18,8 @@ public class MenuMusic : MonoBehaviour
 			Destroy(gameObject);
 		}
 	}
-	
-	void FixedUpdate()
+
+	void OnLevelWasLoaded(int level)
 	{
 		if (Application.loadedLevelName == "PlayMenu") 
 		{
